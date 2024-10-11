@@ -33,11 +33,14 @@ router.post(
         res.status(400).json({ msg: 'User already exists' });
       }
 
-      const avatar = gravatar.url(email, {
-        s: '200',
-        r: 'pg',
-        d: 'mm',
-      });
+      const avatar = normalize(
+        gravatar.url(email, {
+          s: '200',
+          r: 'pg',
+          d: 'mm',
+        }),
+        { forceHttps: true }
+      );
 
       user = new User({
         name,
