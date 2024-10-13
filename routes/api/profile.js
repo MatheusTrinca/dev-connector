@@ -6,6 +6,7 @@ const { check, validationResult } = require('express-validator');
 const normalize = require('normalize-url');
 const config = require('config');
 const axios = require('axios');
+const checkObjectId = require('../../middlewares/checkObjectId');
 
 const router = express.Router();
 
@@ -114,7 +115,7 @@ router.get('/', async (req, res) => {
 // @route   GET api/profile/user/:user_id
 // @desc    Get profile by user ID
 // @access  Public
-router.get('/user/:user_id', async (req, res) => {
+router.get('/user/:user_id', checkObjectId('user_id'), async (req, res) => {
   try {
     const profile = await Profile.findOne({
       user: req.params.user_id,
@@ -140,13 +141,11 @@ router.get('/user/:user_id', async (req, res) => {
 // @access  Private
 router.delete('/user/:user_id', async (req, res) => {
   try {
-    // TODO: remove all posts
-
-    // Remove profile
-    await Profile.findOneAndDelete({ user: req.params.user_id });
-
-    // Remove user
-    await User.findOneAndDelete({ user: req.params.user_id });
+    await Promise.all([
+      Post.deleteMany({ user: req.user.id }),
+      Profile.findOneAndDelete({ user: req.params.user_id }),
+      User.findOneAndDelete({ user: req.params.user_id }),
+    ]);
 
     res.json({ msg: 'User deleted' });
   } catch (err) {
