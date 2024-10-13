@@ -3,6 +3,7 @@ const { check, validationResult } = require('express-validator');
 const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const normalize = require('normalize-url');
 const config = require('config');
 const User = require('../../models/User');
 
@@ -72,7 +73,7 @@ router.post(
         }
       );
     } catch (err) {
-      console.err(err.message);
+      console.error(err.message);
       res.status(500).send('Server Error');
     }
   }

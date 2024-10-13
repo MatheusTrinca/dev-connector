@@ -17,7 +17,7 @@ router.get('/', auth, async (req, res) => {
 
     res.json(user);
   } catch (err) {
-    console.err(err.message);
+    console.error(err.message);
     res.status(500).send('Server error');
   }
 });
@@ -70,7 +70,7 @@ router.post(
         }
       );
     } catch (err) {
-      console.err(err.message);
+      console.error(err.message);
       res.status(500).send('Server error');
     }
   }
