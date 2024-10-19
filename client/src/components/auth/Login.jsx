@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { login } from '../../actions/auth';
 import PropTypes from 'prop-types';
 
-const Login = ({ login }) => {
+const Login = ({ login, isAuthenticated }) => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -20,6 +20,10 @@ const Login = ({ login }) => {
 
     login(formData);
   };
+
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" />;
+  }
 
   return (
     <section className="container">
@@ -58,10 +62,15 @@ const Login = ({ login }) => {
 
 Login.propTypes = {
   login: PropTypes.func.isRequired,
+  isAuthenticated: PropTypes.bool.isRequired,
 };
+
+const mapStateToProps = ({ auth }) => ({
+  isAuthenticated: auth.isAuthenticated,
+});
 
 const mapDispatchToProps = {
   login,
 };
 
-export default connect(null, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
