@@ -1,18 +1,19 @@
-import api from '../utils/api';
-import { setAlert } from './alert';
+import api from "../utils/api";
+import { setAlert } from "./alert";
 import {
   AUTH_ERROR,
+  CLEAR_PROFILE,
   LOGIN_FAIL,
   LOGIN_SUCCESS,
   LOGOUT,
   REGISTER_FAIL,
   REGISTER_SUCCESS,
   USER_LOADED,
-} from './types';
+} from "./types";
 
 export const loadUser = () => async dispatch => {
   try {
-    const res = await api.get('/auth');
+    const res = await api.get("/auth");
 
     dispatch({
       type: USER_LOADED,
@@ -27,7 +28,7 @@ export const loadUser = () => async dispatch => {
 
 export const register = formData => async dispatch => {
   try {
-    const res = await api.post('/users', formData);
+    const res = await api.post("/users", formData);
 
     dispatch({
       type: REGISTER_SUCCESS,
@@ -39,7 +40,7 @@ export const register = formData => async dispatch => {
     const error = err.response.data.msg;
 
     if (error) {
-      dispatch(setAlert(error, 'danger'));
+      dispatch(setAlert(error, "danger"));
     }
 
     dispatch({
@@ -50,7 +51,7 @@ export const register = formData => async dispatch => {
 
 export const login = formData => async dispatch => {
   try {
-    const res = await api.post('/auth', formData);
+    const res = await api.post("/auth", formData);
 
     dispatch({
       type: LOGIN_SUCCESS,
@@ -62,7 +63,7 @@ export const login = formData => async dispatch => {
     const error = err.response.data.msg;
 
     if (error) {
-      dispatch(setAlert(error, 'danger'));
+      dispatch(setAlert(error, "danger"));
     }
 
     dispatch({
@@ -71,4 +72,7 @@ export const login = formData => async dispatch => {
   }
 };
 
-export const logout = () => ({ type: LOGOUT });
+export const logout = () => dispatch => {
+  dispatch({ type: LOGOUT });
+  dispatch({ type: CLEAR_PROFILE });
+};

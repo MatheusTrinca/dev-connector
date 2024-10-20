@@ -5,9 +5,14 @@ import { logout } from '../../actions/auth';
 import PropTypes from 'prop-types';
 
 const Navbar = ({ isAuthenticated, logout }) => {
-  console.log('ISAUTHENTICATED', isAuthenticated);
   const authLinks = (
     <ul>
+      <li>
+        <Link to="dashboard">
+          <i className="fas fa-user" />{' '}
+          <span className="hide-sm">Dashboard</span>
+        </Link>
+      </li>
       <li>
         <a onClick={logout} href="#!">
           <i className="fas fa-sign-out-alt" />{' '}
@@ -41,11 +46,6 @@ const Navbar = ({ isAuthenticated, logout }) => {
       <>{isAuthenticated ? authLinks : guestLinks}</>
     </nav>
   );
-};
-
-Navbar.propTypes = {
-  isAuthenticated: PropTypes.bool.isRequired,
-  logout: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({ auth }) => ({
