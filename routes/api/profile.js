@@ -1,6 +1,7 @@
 const express = require('express');
 const Profile = require('../../models/Profile');
 const User = require('../../models/User');
+const Post = require('../../models/Post');
 const auth = require('../../middlewares/auth');
 const { check, validationResult } = require('express-validator');
 const normalize = require('normalize-url');
@@ -68,9 +69,14 @@ router.post(
           : '',
       skills: Array.isArray(skills)
         ? skills
-        : skills.split(',').map(skill => ' ' + skill.trim()),
+        : skills
+            .split(',')
+            .map(skill => skill.trim())
+            .join(' '),
       ...rest,
     };
+
+    console.log('profileFields', profileFields);
 
     // Build socialFields object
     const socialFields = { youtube, twitter, instagram, linkedin, facebook };
@@ -139,21 +145,20 @@ router.get('/user/:user_id', checkObjectId('user_id'), async (req, res) => {
 // @route   DELETE api/profile/user/:user_id
 // @desc    Delete Profile, Users and Posts
 // @access  Private
-router.delete('/user/:user_id', async (req, res) => {
+router.delete('/', auth, async (req, res) => {
   try {
+    // Remove user posts
+    // Remove profile
+    // Remove user
     await Promise.all([
       Post.deleteMany({ user: req.user.id }),
-      Profile.findOneAndDelete({ user: req.params.user_id }),
-      User.findOneAndDelete({ user: req.params.user_id }),
+      Profile.findOneAndDelete({ user: req.user.id }),
+      User.findOneAndDelete({ _id: req.user.id }),
     ]);
 
     res.json({ msg: 'User deleted' });
   } catch (err) {
     console.error(err.message);
-    if (err.kind === 'ObjectId') {
-      res.status(400).json({ msg: 'Profile not found' });
-    }
-
     res.status(500).send('Server Error');
   }
 });

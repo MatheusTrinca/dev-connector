@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { createProfile } from '../../actions/profile';
 
 /*
   NOTE: declare initialState outside of component
@@ -22,9 +24,11 @@ const initialState = {
   instagram: '',
 };
 
-const CreateProfile = props => {
+const CreateProfile = ({ profile, createProfile }) => {
   const [formData, setFormData] = useState(initialState);
   const [displaySocialInputs, toggleSocialInputs] = useState(false);
+
+  const navigate = useNavigate();
 
   const {
     company,
@@ -47,7 +51,12 @@ const CreateProfile = props => {
 
   const onSubmit = e => {
     e.preventDefault();
-    console.log('FORM_DATA', formData);
+
+    const editing = profile ? true : false;
+
+    createProfile(formData, editing).then(() => {
+      if (!editing) navigate('/dashboard');
+    });
   };
 
   return (
@@ -224,6 +233,16 @@ const CreateProfile = props => {
   );
 };
 
-CreateProfile.propTypes = {};
+CreateProfile.propTypes = {
+  profile: PropTypes.object.isRequired,
+};
 
-export default CreateProfile;
+const mapStateToProps = ({ profile }) => ({
+  profile: profile.profile,
+});
+
+const mapDispatchToProps = {
+  createProfile,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(CreateProfile);
