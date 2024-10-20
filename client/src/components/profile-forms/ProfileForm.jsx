@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link, useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { createProfile } from '../../actions/profile';
+import { createProfile, getCurrentProfile } from '../../actions/profile';
 
 /*
   NOTE: declare initialState outside of component
@@ -24,7 +24,12 @@ const initialState = {
   instagram: '',
 };
 
-const CreateProfile = ({ profile, createProfile }) => {
+const ProfileForm = ({
+  profile,
+  createProfile,
+  getCurrentProfile,
+  loading,
+}) => {
   const [formData, setFormData] = useState(initialState);
   const [displaySocialInputs, toggleSocialInputs] = useState(false);
 
@@ -44,6 +49,25 @@ const CreateProfile = ({ profile, createProfile }) => {
     youtube,
     instagram,
   } = formData;
+
+  useEffect(() => {
+    // if there is no profile, we attempt to fetch one
+    if (!profile) getCurrentProfile();
+
+    // when we finish loading, we have the profile
+    // build the profileData
+    if (!loading && profile) {
+      const profileData = { ...initialState };
+
+      // merge profile into profileData
+      Object.assign(profileData, profile, profile.social);
+
+      if (Array.isArray(profile.skills)) {
+        profileData.skills = profile.skills.join(', ');
+      }
+      setFormData(profileData);
+    }
+  }, [getCurrentProfile, loading, profile]);
 
   const onChange = e => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -233,16 +257,20 @@ const CreateProfile = ({ profile, createProfile }) => {
   );
 };
 
-CreateProfile.propTypes = {
+ProfileForm.propTypes = {
   profile: PropTypes.object.isRequired,
+  getCurrentProfile: PropTypes.func.isRequired,
+  loading: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = ({ profile }) => ({
   profile: profile.profile,
+  loading: profile.loading,
 });
 
 const mapDispatchToProps = {
   createProfile,
+  getCurrentProfile,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(CreateProfile);
+export default connect(mapStateToProps, mapDispatchToProps)(ProfileForm);

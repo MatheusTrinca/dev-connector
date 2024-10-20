@@ -19,7 +19,6 @@ export const getCurrentProfile = () => async dispatch => {
 };
 
 export const createProfile = (formData, editing) => async dispatch => {
-  console.log('FORMDATA', formData);
   try {
     const res = await api.post('/profile', formData);
 

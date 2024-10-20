@@ -69,14 +69,9 @@ router.post(
           : '',
       skills: Array.isArray(skills)
         ? skills
-        : skills
-            .split(',')
-            .map(skill => skill.trim())
-            .join(' '),
+        : skills.split(',').map(skill => skill.trim()),
       ...rest,
     };
-
-    console.log('profileFields', profileFields);
 
     // Build socialFields object
     const socialFields = { youtube, twitter, instagram, linkedin, facebook };
