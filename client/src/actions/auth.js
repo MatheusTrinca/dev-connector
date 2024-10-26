@@ -20,6 +20,10 @@ export const loadUser = () => async dispatch => {
       payload: res.data,
     });
   } catch (err) {
+    const error = err.response.data;
+
+    dispatch(setAlert(error.msg, 'danger'));
+
     dispatch({
       type: AUTH_ERROR,
     });
@@ -37,11 +41,9 @@ export const register = formData => async dispatch => {
 
     dispatch(loadUser());
   } catch (err) {
-    const errors = err.response.data.errors;
+    const error = err.response.data;
 
-    if (errors) {
-      errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
-    }
+    dispatch(setAlert(error.msg, 'danger'));
 
     dispatch({
       type: REGISTER_FAIL,
@@ -60,11 +62,9 @@ export const login = formData => async dispatch => {
 
     dispatch(loadUser());
   } catch (err) {
-    const errors = err.response.data.errors;
+    const error = err.response.data;
 
-    if (errors) {
-      errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
-    }
+    dispatch(setAlert(error.msg, 'danger'));
 
     dispatch({
       type: LOGIN_FAIL,
