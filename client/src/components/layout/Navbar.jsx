@@ -8,6 +8,9 @@ const Navbar = ({ isAuthenticated, logout }) => {
   const authLinks = (
     <ul>
       <li>
+        <Link to="profiles">Developers</Link>
+      </li>
+      <li>
         <Link to="dashboard">
           <i className="fas fa-user" />{' '}
           <span className="hide-sm">Dashboard</span>
@@ -24,6 +27,9 @@ const Navbar = ({ isAuthenticated, logout }) => {
 
   const guestLinks = (
     <ul>
+      <li>
+        <Link to="profiles">Developers</Link>
+      </li>
       <li>
         <Link to="/profiles">Developers</Link>
       </li>
@@ -46,6 +52,11 @@ const Navbar = ({ isAuthenticated, logout }) => {
       <>{isAuthenticated ? authLinks : guestLinks}</>
     </nav>
   );
+};
+
+Navbar.propTypes = {
+  isAuthenticated: PropTypes.bool.isRequired,
+  logout: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({ auth }) => ({
